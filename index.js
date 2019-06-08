@@ -1,37 +1,11 @@
 #!/usr/bin/env node
 
-const program = require('commander')
-const inquirer = require('inquirer')
-const shell = require('shelljs')
-
-const initAction = async () => {
-  let answers = await inquirer.prompt([{
-    type: 'input',
-    message: '请输入项目名称:',
-    name: 'name'
-  }])
-  console.log('项目名为：', answers.name)
-  console.log('正在拷贝项目，请稍等')
-
-  const remote = 'https://github.com/PanJiaChen/vue-admin-template.git'
-  const curName = 'vue-admin-template'
-  const tarName = answers.name
-
-  shell.exec(`
-                git clone ${remote} --depth=1
-                mv ${curName} ${tarName}
-                rm -rf ./${tarName}/.git
-                cd ${tarName}
-                cnpm i
-              `, (error, stdout, stderr) => {
-    if (error) {
-      console.error(`exec error: ${error}`)
-      return
-    }
-    console.log(`${stdout}`)
-    console.log(`${stderr}`)
-  });
-}
+const program = require('commander');
+const action = require("./services/action");
+const shell = require("shelljs");
+var iconv = require('iconv-lite');
+var encoding = 'cp936';
+var binaryEncoding = 'binary';
 
 program.version(require('./package.json').version)
 
@@ -39,6 +13,19 @@ program.version(require('./package.json').version)
 program
   .command('init')
   .description('创建项目')
-  .action(initAction)
+  .action(action.initAction);
 
-program.parse(process.argv)
+
+// 乱码
+program.command("commit <type> <subject> [body] [foot]")
+  .description("commit to resp")
+  .action((type, subject, body, foot) => {
+    shell.exec(`git add -A`)
+    .exec(`git commit -m "${type}: ${subject} ${body} ${foot}"`)
+    .exec(`git push`,{ encoding: binaryEncoding },function(err, stdout, stderr) {
+      console.log(iconv.decode(new Buffer(stdout, binaryEncoding), encoding), iconv.decode(new Buffer(stderr, binaryEncoding), encoding));
+    });
+  });
+
+(process.argv.length < 3) && process.argv.push("-h");
+program.parse(process.argv);
