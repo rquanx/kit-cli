@@ -40,11 +40,7 @@ const showMessage = (err, stdout, stderr) => {
 const commit = (type, subject, body = "", foot = "") => {
   shell
     .exec(`git add -A`)
-    .exec(`git commit -m "${type}: ${subject} 
-    
-    ${body}
-    
-    ${foot}"`)
+    .exec(`git commit -m "${type}: ${subject}" -m "${body}" -m "${foot}"`)
     .exec(`git push`, {
       encoding: binaryEncoding
     }, showMessage);
