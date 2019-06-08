@@ -2,10 +2,6 @@
 
 const program = require('commander');
 const action = require("./services/action");
-const shell = require("shelljs");
-var iconv = require('iconv-lite');
-var encoding = 'cp936';
-var binaryEncoding = 'binary';
 
 program.version(require('./package.json').version)
 
@@ -16,16 +12,29 @@ program
   .action(action.initAction);
 
 
-// 乱码
 program.command("commit <type> <subject> [body] [foot]")
-  .description("commit to resp")
-  .action((type, subject, body, foot) => {
-    shell.exec(`git add -A`)
-    .exec(`git commit -m "${type}: ${subject} ${body} ${foot}"`)
-    .exec(`git push`,{ encoding: binaryEncoding },function(err, stdout, stderr) {
-      console.log(iconv.decode(new Buffer(stdout, binaryEncoding), encoding), iconv.decode(new Buffer(stderr, binaryEncoding), encoding));
-    });
-  });
+  .description(`
+  type：提交类型，可选值如下
+  * work: 开发中(work in progress)
+  * feature：新功能(new feature)
+  * fix：修补bug(fix bug)
+  * doc：文档(documentation changes)
+  * style： 格式(change code format)
+  * refactor：重构(modify code but not feature)
+  * test：增加测试(test code)
+  * chore：构建过程或辅助工具的变动(changes don't modify src and test files, only config or tasks)
+  * none: 不写明
+  
+  subject：commit 目的的简短描述。
+  
+  body: 对本次 commit 的详细描述
+  
+  footer: 描述一些特殊情况，不兼容变动和issue关闭。
+  `)
+  .action(action.commit);
+
+program.command("pull").description("pull form resp").action(action.pull);
+
 
 (process.argv.length < 3) && process.argv.push("-h");
 program.parse(process.argv);

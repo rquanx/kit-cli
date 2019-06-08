@@ -6,6 +6,12 @@ const spinner = ora();
 const chalk = require('chalk');
 const path = require("path");
 
+
+const shell = require("shelljs");
+var iconv = require('iconv-lite');
+var encoding = 'cp936';
+var binaryEncoding = 'binary';
+
 const initAction = async () => {
   try {
     // 获取信息
@@ -27,6 +33,31 @@ const initAction = async () => {
   }
 }
 
+const showMessage = (err, stdout, stderr) => {
+  console.log(iconv.decode(Buffer.from(stdout, binaryEncoding), encoding), iconv.decode(Buffer.from(stderr, binaryEncoding), encoding));
+}
+
+const commit = (type, subject, body = "", foot = "") => {
+  shell
+    .exec(`git add -A`)
+    .exec(`git commit -m "${type}: ${subject} 
+    
+    ${body}
+    
+    ${foot}"`)
+    .exec(`git push`, {
+      encoding: binaryEncoding
+    }, showMessage);
+}
+
+const pull = () => {
+  shell.exec("git pull", {
+    encoding: binaryEncoding
+  }, showMessage)
+}
+
 module.exports = {
-  initAction
+  initAction,
+  commit,
+  pull
 }
