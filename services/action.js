@@ -38,9 +38,16 @@ const showMessage = (err, stdout, stderr) => {
 }
 
 const commit = (type, subject, body = "", foot = "") => {
+  let mainInfo = "";
+  [body, foot].forEach((item) => {
+    if (item) {
+      mainInfo += ` -m "${item}"`;
+    }
+  });
+  
   shell
     .exec(`git add -A`)
-    .exec(`git commit -m "${type}: ${subject}" -m "${body}" -m "${foot}"`)
+    .exec(`git commit -m "${type}: ${subject}"${mainInfo}`)
     .exec(`git push`, {
       encoding: binaryEncoding
     }, showMessage);
