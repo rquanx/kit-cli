@@ -44,7 +44,7 @@ const commit = (type, subject, body = "", foot = "") => {
       mainInfo += ` -m "${item}"`;
     }
   });
-  
+
   shell
     .exec(`git add -A`)
     .exec(`git commit -m "${type}: ${subject}"${mainInfo}`)
@@ -59,8 +59,15 @@ const pull = () => {
   }, showMessage)
 }
 
+const clone = (url) => {
+  shell.exec(`git clone ${url}`, {
+    encoding: binaryEncoding
+  }, showMessage)
+}
+
 module.exports = {
   initAction,
   commit,
-  pull
+  pull,
+  clone
 }

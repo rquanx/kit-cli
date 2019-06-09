@@ -34,7 +34,7 @@ program.command("commit <type> <subject> [body] [foot]")
   .action(action.commit);
 
 program.command("pull").description("pull form resp").action(action.pull);
-
+program.command("clone <url>").description("clone resp").action(action.clone);
 
 (process.argv.length < 3) && process.argv.push("-h");
 program.parse(process.argv);
