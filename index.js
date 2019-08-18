@@ -1,7 +1,6 @@
 #!/usr/bin/env node
-
 const program = require('commander');
-const action = require("./services/action");
+const Action = require("./action");
 
 program.version(require('./package.json').version)
 
@@ -9,10 +8,10 @@ program.version(require('./package.json').version)
 program
   .command('init')
   .description('创建项目')
-  .action(action.initAction);
+  .action(Action.init);
 
 
-program.command("commit <type> <subject> [body] [foot]")
+program.command("commit")
   .description(`
   type：提交类型，可选值如下
   * work: 开发中(work in progress)
@@ -31,10 +30,10 @@ program.command("commit <type> <subject> [body] [foot]")
   
   footer: 描述一些特殊情况，不兼容变动和issue关闭。
   `)
-  .action(action.commit);
+  .action(Action.commit);
 
-program.command("pull").description("pull form resp").action(action.pull);
-program.command("clone <url>").description("clone resp").action(action.clone);
+program.command("pull").description("pull form resp").action(Action.pull);
+program.command("clone <url>").description("clone resp").action(Action.clone);
 
 (process.argv.length < 3) && process.argv.push("-h");
 program.parse(process.argv);

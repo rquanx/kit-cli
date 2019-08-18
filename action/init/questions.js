@@ -1,4 +1,4 @@
-const inquirer = require("../common/inquirer");
+const inquirer = require("../../common/inquirer");
 
 async function initQuestoins() {
   let projectSetting = {
