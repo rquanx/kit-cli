@@ -7,9 +7,16 @@ const Message = require("../../common/message");
 const commit = async () => {
   let infoObj = {};
   for (var key in Questions) {
-    infoObj[key] = await Prompt.prompt(Questions[key]);
+    let value = (await Prompt.prompt(Questions[key]));
+    if(key === Type.Questions.type) {
+      infoObj[key] = Object.keys(Type.Commit).filter((key) => value === Type.Commit[key])[0]; 
+    }
+    else {
+      infoObj[key] = value;
+    }
+    console.log(infoObj[key]);
   }
-  let mainInfo = `"${infoObj[Type.Questions.type]}: ${Type.Questions.subject}"`;
+  let mainInfo = `"${infoObj[Type.Questions.type]}: ${infoObj[Type.Questions.subject]}"`;
   [infoObj[Type.Questions.body], infoObj[Type.Questions.foot]].forEach(item => {
     if (item) {
       mainInfo += ` -m "${item}"`;
