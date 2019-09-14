@@ -22,7 +22,6 @@ const commit = async () => {
       mainInfo += ` -m "${item}"`;
     }
   });
-
   shell
     .exec(`git add -A`)
     .exec(`git commit -m ${mainInfo}`)
