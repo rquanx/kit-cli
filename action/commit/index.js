@@ -3,20 +3,31 @@ const Type = require("./type");
 const Prompt = require("../../common/inquirer");
 const shell = require("shelljs");
 const Message = require("../../common/message");
-var v = ["update star list","","",""];
+const trimChar = (value, char) =>
+  value
+    .split(`${char}`)
+    .filter(i => i)
+    .join("");
+
 const commit = async () => {
   let infoObj = {};
   for (var key in Questions) {
-    let value = v[0]; // (await Prompt.prompt(Questions[key]));
-    if(key === Type.Questions.type) {
-      infoObj[key] = Object.keys(Type.Commit).filter((key) => value === Type.Commit[key])[0]; 
+    let value = await Prompt.prompt(Questions[key]);
+    if (value && typeof value === "string") {
+      value = trimChar(trimChar(value.trim(), '"'), "'");
     }
-    else {
+    if (key === Type.Questions.type) {
+      infoObj[key] = Object.keys(Type.Commit).filter(
+        key => value === Type.Commit[key]
+      )[0];
+    } else {
       infoObj[key] = value;
     }
     console.log(infoObj[key]);
   }
-  let mainInfo = `"${infoObj[Type.Questions.type]}: ${infoObj[Type.Questions.subject]}"`;
+  let mainInfo = `"${infoObj[Type.Questions.type]}: ${
+    infoObj[Type.Questions.subject]
+  }"`;
   [infoObj[Type.Questions.body], infoObj[Type.Questions.foot]].forEach(item => {
     if (item) {
       mainInfo += ` -m "${item}"`;
